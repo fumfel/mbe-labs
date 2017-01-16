@@ -11,3 +11,4 @@ context(arch ='i386', os ='linux')
 # 3. Wygenerowanie numerycznego shellcode'u i sekwencji do jego wpisania w pamiec (store + number + index)
 # Miejsce w pamieci do wpisania  adres do wpisania = numer + (index * 4)
 # Stała dodawana do indeksu: 0xBFFFF3F8
+# http://codegists.com/snippet/python/lab3apy_kyrre_python
