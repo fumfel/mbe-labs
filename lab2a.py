@@ -10,7 +10,7 @@ for c in range(0x41, 0x50):
 	elif c is 0x4e:
 		print("\x04\x08" * 8)
 	elif c is 0x4f:
-		print(struct.pack("<I", RA_FROM_CONCATENATE_FIRST_CHARS)) 
+		print("\xe6\x87\x04\x08" * 4)
 	else:
 		print(chr(c)*16 + char_endline)
-		#print(struct.pack("<I", RA_FROM_CONCATENATE_FIRST_CHARS) * 4)
+		# print("\xe6\x87\x04\x08" * 4)
