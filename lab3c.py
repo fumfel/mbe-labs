@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 # FLAG: th3r3_iz_n0_4dm1ns_0n1y_U!
+# Shellcode reference: https://stackoverflow.com/questions/2859127/shellcode-for-a-simple-stack-overflow-exploited-program-with-shell-terminates-d
 import binascii
 
 shellcode = ""
