@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7
 # FLAG: wh0_n33ds_5h3ll3_wh3n_U_h4z_s4nd
 # TIP: Writing memory behind child (sandbox) process memory area.
+# http://codegists.com/user/kyrre
 
 shellcode = ""
 
