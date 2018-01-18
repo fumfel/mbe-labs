@@ -1,3 +1,4 @@
+# FLAG: s0m3tim3s_r3t2libC_1s_3n0ugh
 import struct
 
 shellcode = ""
