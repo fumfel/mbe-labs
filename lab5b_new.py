@@ -1,3 +1,4 @@
+# FLAG: th4ts_th3_r0p_i_lik3_2_s33
 import struct
 
 payload = ""
