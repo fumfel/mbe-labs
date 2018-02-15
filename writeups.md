@@ -32,4 +32,6 @@ struct msg {
     printf("-Enter data to encrypt: ");
     read(0, &new_msg->message, new_msg->msg_len);
 ```
+* Aby nadpisać zmienną `msg_len` wystarczy stworzyć wiadomość o długości 131 bajtów (128 max + 3 przepełnienia) i podać dowolnego stringa o tej długości
+
 ----
