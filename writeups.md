@@ -1,5 +1,15 @@
 ## MBE - Notatki do zadań ##
 
+----
+
+**Misc Info**
+
+* Zmienne na stosie są alokowane w odwrotnym kierunku niż deklaracja w kodzie programu
+* Kierunek ułożenia w heapie jest odwrotny do tego co na stosie - czyli zgodnie z deklaracją w programie
+
+
+----
+
 **Lab 2C**
 
 Flaga:  `1m_all_ab0ut_d4t_b33f`
@@ -12,7 +22,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 * Binarka statycznie skompilowana z ASLR, Partial RELRO, kanarkiem i NX
 * Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
-* Wiadomości przechowuje struktura zdefiniowana poniżej (kierunek ułożenia w heapie jest odwrotny do tego co na stosie):
+* Wiadomości przechowuje struktura zdefiniowana poniżej:
 ```c
 struct msg {
     void (* print_msg)(struct msg *);
