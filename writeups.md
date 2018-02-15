@@ -1,7 +1,5 @@
 ## MBE - Notatki do zadań ##
 
-----
-
 **Misc Info**
 
 * Zmienne na stosie są alokowane w odwrotnym kierunku niż deklaracja w kodzie programu
