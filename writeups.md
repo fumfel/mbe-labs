@@ -18,7 +18,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 Flaga:  `1m_all_ab0ut_d4t_b33f`
 
-* Binarka statycznie skompilowana z ASLR, Partial RELRO, kanarkiem i NX
+* Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak ASLR!**
 * Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
 * Wiadomości przechowuje struktura zdefiniowana poniżej:
 ```c
@@ -41,5 +41,7 @@ struct msg {
     read(0, &new_msg->message, new_msg->msg_len);
 ```
 * Aby nadpisać zmienną `msg_len` wystarczy stworzyć wiadomość o długości 131 bajtów (128 max + 3 przepełnienia) i podać dowolnego stringa o tej długości
+* Druga wiadomość o dowolnej długości (najlepiej ~100 bajtów) oraz treści posłuży do przechowania w niej bajtów łańcucha ROP
+* Korzystając z nadpisanej zmiennej `msg_len` za pomocą opcji edytowania, wpisujemy łańcuch ROP nie zważając na jego wielkość
 
 ----
