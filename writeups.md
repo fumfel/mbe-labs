@@ -11,6 +11,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 * Binarka statycznie skompilowana z ASLR, Partial RELRO, kanarkiem i NX
+* Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
 * Wiadomości przechowuje struktura zdefiniowana poniżej (kierunek ułożenia w heapie jest odwrotny do tego co na stosie):
 ```c
 struct msg {
