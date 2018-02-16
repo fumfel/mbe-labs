@@ -68,5 +68,8 @@ int print_index()
     return 0;
 }
 ```
+* Docelowa struktura pamięci wygląda w następujący sposób (do pivotu): `| Śmieci (272b - 132b) | Adres add esp, 0x24... | Śmieci (44b) | Łańcuch ROP |`
+* W tym momencie wymagane jest umieszczenie wskaźnika w EAX, celem wywołania go pod adresem `0x804951F w print_index()` -
+* Aby to uzyskać wpisujemy w `numbuf`: `| Śmieci (12b) | Adres mov eax, edx... | Adres xchg eax, esp... |`
 
 ----
