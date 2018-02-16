@@ -68,8 +68,13 @@ int print_index()
     return 0;
 }
 ```
-* Docelowa struktura pamięci wygląda w następujący sposób (do pivotu): `| Śmieci (272b - 132b) | Adres add esp, 0x24... | Śmieci (44b) | Łańcuch ROP |`
-* W tym momencie wymagane jest umieszczenie wskaźnika w EAX, celem wywołania go pod adresem `0x804951F w print_index()` -
-* Aby to uzyskać wpisujemy w `numbuf`: `| Śmieci (12b) | Adres mov eax, edx... | Adres xchg eax, esp... |`
+* Docelowa struktura pamięci wygląda w następujący sposób (do pivotu): `| Śmieci (272b - 132b) | Adres add esp, 0x24... | Śmieci (44b) | Łańcuch ROP |` 
+* W tym momencie wymagane jest umieszczenie wskaźnika na `message[1]` (tam jest umieszczony ROP) w EAX, celem wywołania go pod adresem `0x804951F w print_index()` -
+* Aby to uzyskać wpisujemy w `numbuf` (stos) : `| Śmieci (12b) | Adres mov eax, edx... | Adres xchg eax, esp... |`
+
+**Podsumowanie wykonania kodu**:
+1. W `numbuf` podmieniamy wskaźnik ESP na `message[1]`
+2. Przeskok do `message[1]` i kolejny przeskok ESP+24 gdzie jest właściwy ROP
+3. Właściwy ROP i wykonanie `system()`
 
 ----
