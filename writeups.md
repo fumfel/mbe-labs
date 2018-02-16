@@ -43,5 +43,6 @@ struct msg {
 * Aby nadpisać zmienną `msg_len` wystarczy stworzyć wiadomość o długości 131 bajtów (128 max + 3 przepełnienia) i podać dowolnego stringa o tej długości
 * Druga wiadomość o dowolnej długości (najlepiej ~100 bajtów) oraz treści posłuży do przechowania w niej bajtów łańcucha ROP
 * Korzystając z nadpisanej zmiennej `msg_len` za pomocą opcji edytowania, wpisujemy łańcuch ROP nie zważając na jego wielkość
+* Chunki na heapie są oddzielone od siebie o 272 bajty
 
 ----
