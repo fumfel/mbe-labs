@@ -16,7 +16,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 **Lab 7A**
 
-Flaga:  `1m_all_ab0ut_d4t_b33f`
+Flaga:  `0verfl0wz_0n_th3_h3ap_4int_s0_bad`
 
 * Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak ASLR!**
 * Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
