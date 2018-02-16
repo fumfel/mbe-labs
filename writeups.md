@@ -74,7 +74,7 @@ int print_index()
 
 **Podsumowanie wykonania kodu**:
 1. W `numbuf` podmieniamy wskaźnik ESP na `message[1]`
-2. Przeskok do `message[1]` i kolejny przeskok ESP+24 gdzie jest właściwy ROP
-3. Właściwy ROP i wykonanie `system()`
+2. Przeskok do `message[1]` i kolejny przeskok ESP+24h gdzie jest właściwy ROP
+3. Właściwy ROP i wykonanie `system(/bin/bash)`
 
 ----
