@@ -16,7 +16,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 **Lab 7A**
 
-Flaga:  `1m_all_ab0ut_d4t_b33f`
+Flaga:  `0verfl0wz_0n_th3_h3ap_4int_s0_bad`
 
 * Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak ASLR!**
 * Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
@@ -68,5 +68,13 @@ int print_index()
     return 0;
 }
 ```
+* Docelowa struktura pamięci wygląda w następujący sposób (do pivotu): `| Śmieci (272b - 132b) | Adres add esp, 0x24... | Śmieci (44b) | Łańcuch ROP |` 
+* W tym momencie wymagane jest umieszczenie wskaźnika na `message[1]` (tam jest umieszczony ROP) w EAX, celem wywołania go pod adresem `0x804951F w print_index()` -
+* Aby to uzyskać wpisujemy w `numbuf` (stos) : `| Śmieci (12b) | Adres mov eax, edx... | Adres xchg eax, esp... |`
+
+**Podsumowanie wykonania kodu**:
+1. W `numbuf` podmieniamy wskaźnik ESP na `message[1]`
+2. Przeskok do `message[1]` i kolejny przeskok ESP+24h gdzie jest właściwy ROP
+3. Właściwy ROP i wykonanie `system(/bin/bash)`
 
 ----
