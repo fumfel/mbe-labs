@@ -44,7 +44,7 @@ struct msg {
 * Druga wiadomość o dowolnej długości (najlepiej ~100 bajtów) oraz treści posłuży do przechowania w niej bajtów łańcucha ROP
 * Korzystając z nadpisanej zmiennej `msg_len` za pomocą opcji edytowania, wpisujemy łańcuch ROP nie zważając na jego wielkość
 * Chunki na heapie są oddzielone od siebie o 272 bajty
-* Aby umieścić dane na stosie można wykorzystać zmienną `numbuf` z funkcji `print_index()` - zawiera indeks wiadomości do wyświetlenia (`strtoul()` musi to umieć przeparsować i się nie wysypać):
+* Aby umieścić dane na stosie można wykorzystać zmienną `numbuf` (ESP+0x1C) z funkcji `print_index()` - zawiera indeks wiadomości do wyświetlenia (`strtoul()` musi to umieć przeparsować i się nie wysypać):
 ```c
 int print_index()
 {
