@@ -44,5 +44,29 @@ struct msg {
 * Druga wiadomość o dowolnej długości (najlepiej ~100 bajtów) oraz treści posłuży do przechowania w niej bajtów łańcucha ROP
 * Korzystając z nadpisanej zmiennej `msg_len` za pomocą opcji edytowania, wpisujemy łańcuch ROP nie zważając na jego wielkość
 * Chunki na heapie są oddzielone od siebie o 272 bajty
+* Aby umieścić dane na stosie można wykorzystać zmienną `numbuf` z funkcji `print_index()`:
+```c
+int print_index()
+{
+    char numbuf[32];
+    unsigned int i = 0;
+
+    /* get message index to print */
+    printf("-Input message index to print: ");
+    fgets(numbuf, sizeof(numbuf), stdin);
+    i = strtoul(numbuf, NULL, 10);
+
+    if(i >= MAX_MSG || messages[i] == NULL)
+    {
+        printf("-Invalid message index!\n");
+        return 1;
+    }
+
+    /* print the message of interest */
+    messages[i]->print_msg(messages[i]);
+
+    return 0;
+}
+```
 
 ----
