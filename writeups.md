@@ -96,4 +96,11 @@ struct fileComp {
 	int cmp;
 };
 ```
-
+* Program wczytuje zawartość plików i porównuje je pod kątem leksykograficznym
+* Posiada dwa sprawdzenia: pierwszy - czy fd nie jest STDIN oraz czy ścieżka do pliku nie kończy się znakami `.pass` za pomocą funkcji `securityCheck()`
+* Funkcję `securityCheck()` można bardzo prosto obejść podając w jakimkolwiek argumencie, że sprawdzanym plikiem jest STDERR - wtedy następuje wypisanie flagi:
+```
+lab8C@warzone:/levels/lab08$ ./lab8C -fd=3 -fn=/home/lab8B/.pass
+"3v3ryth1ng_Is_@_F1l3
+" is lexicographically equivalent to "<<<For security reasons, your filename has been blocked>>>"
+```
