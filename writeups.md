@@ -81,3 +81,19 @@ int print_index()
 3. Właściwy ROP i wykonanie `system(/bin/bash)`
 
 ----
+
+**Lab 8C**
+
+Flaga:  `3v3ryth1ng_Is_@_F1l3`
+
+* Binarka skompilowana ze wszystkimi mechanizmami bezpieczeństwa
+* Zjada w argumentach zarówno ścieżki do plików, jak i deskryptory plików
+* Dane przechowywane są w strukturze:
+```c
+struct fileComp {
+	char fileContents1[255];
+	char fileContents2[255];
+	int cmp;
+};
+```
+
