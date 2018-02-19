@@ -73,6 +73,7 @@ int print_index()
 * Aby to uzyskać wpisujemy w `numbuf` (stos) : `| Śmieci (12b) | Adres mov eax, edx... | Adres xchg eax, esp... |`
 
 **Podsumowanie wykonania kodu**:
+
 *W tym zadaniu kluczem jest aby zrozumieć, że ESP może wskazywać nie tylko dane na stosie ale również na heapie - dlatego wykorzystywany jest gadżet:* ``add esp, 0x24``
 
 1. W `numbuf` podmieniamy wskaźnik ESP na `message[1]`
