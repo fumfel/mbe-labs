@@ -109,7 +109,7 @@ lab8C@warzone:/levels/lab08$ ./lab8C -fd=3 -fn=/home/lab8B/.pass
 
 **Lab 8B**
 
-Flaga:  ``
+Flaga:  
 
 * Binarka skompilowana ze wszystkimi mechanizmami bezpieczeństwa
 * Funkcjonalność to dodawanie do siebie wektorów trzymanych w strukturze:
@@ -127,3 +127,4 @@ struct vector {
 	unsigned long long i;
 };
 ```
+* W programie jest dodana funkcja `thisIsASecret()` która wywołuje shella
