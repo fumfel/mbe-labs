@@ -106,3 +106,24 @@ lab8C@warzone:/levels/lab08$ ./lab8C -fd=3 -fn=/home/lab8B/.pass
 ```
 
 ----
+
+**Lab 8B**
+
+Flaga:  ``
+
+* Binarka skompilowana ze wszystkimi mechanizmami bezpieczeństwa
+* Funkcjonalność to dodawanie do siebie wektorów trzymanych w strukturze:
+```c
+struct vector {
+	void (*printFunc)(struct vector*);
+	char a;
+	short b;
+	unsigned short c;
+	int d;
+	unsigned int e;
+	long f;
+	unsigned long g;
+	long long h;
+	unsigned long long i;
+};
+```
