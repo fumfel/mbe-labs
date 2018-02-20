@@ -134,4 +134,8 @@ struct vector {
   * v2 - Address: 0x80003100
   * v3 - Address: 0x80003080
   * fav - Address: 0x800030C0
-  
+* Dodanie sumy do ulubionych to nowa alokacja pamięci i dodanie do dziesięcioelementowej tablicy wskaźników
+* Funkcja `loadFave()` ładuje wybrany wektor z ulubionych do v1
+* Funkcja `fave()` jest podatnym komponentem zadania - nadpisuje za dużo i dzięki kilkukrotnemu dodaniu wektora do ulubionych jesteśmy w stanie modyfikować jego zawartość za pomocą wcześniejszego sumowania
+
+
