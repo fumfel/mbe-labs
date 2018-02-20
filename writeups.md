@@ -128,3 +128,10 @@ struct vector {
 };
 ```
 * W programie jest dodana funkcja `thisIsASecret()` która wywołuje shella
+* Program obsługuje trzy wektory - v1 + v2 = v3
+* Wektory w pamięci procesu są ułożone "nie po kolei":
+  * v1 - Address: 0x80003040
+  * v2 - Address: 0x80003100
+  * v3 - Address: 0x80003080
+  * fav - Address: 0x800030C0
+  
