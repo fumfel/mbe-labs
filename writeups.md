@@ -136,6 +136,24 @@ struct vector {
   * fav - Address: 0x800030C0
 * Dodanie sumy do ulubionych to nowa alokacja pamięci i dodanie do dziesięcioelementowej tablicy wskaźników
 * Funkcja `loadFave()` ładuje wybrany wektor z ulubionych do v1
-* Funkcja `fave()` jest podatnym komponentem zadania - nadpisuje za dużo i dzięki kilkukrotnemu dodaniu wektora do ulubionych jesteśmy w stanie modyfikować jego zawartość za pomocą wcześniejszego sumowania
+* Funkcja `fave()` jest podatnym komponentem zadania - nadpisuje za dużo i dzięki kilkukrotnemu dodaniu wektora do ulubionych jesteśmy w stanie modyfikować jego zawartość za pomocą wcześniejszego sumowania:
+```c
+void fave()
+{
+	unsigned int i;
+	for(i=0; i<MAX_FAVES; i++)
+		if(!faves[i])
+			break;
+	if(i == MAX_FAVES)
+		printf("You have too many favorites.\n");
+	else
+	{
+		faves[i] = malloc(sizeof(struct vector));
+		memcpy(faves[i], (int*)(&v3)+i, sizeof(struct vector));
+		printf("I see you added that vector to your favorites, \
+but was it really your favorite?\n");
+	}
+}
+```
 
 
