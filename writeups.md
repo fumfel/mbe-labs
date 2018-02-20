@@ -136,7 +136,7 @@ struct vector {
   * fav - Address: 0x800030C0
 * Dodanie sumy do ulubionych to nowa alokacja pamięci i dodanie do dziesięcioelementowej tablicy wskaźników
 * Funkcja `loadFave()` ładuje wybrany wektor z ulubionych do v1
-* Funkcja `fave()` jest podatnym komponentem zadania - nadpisuje za dużo i dzięki kilkukrotnemu dodaniu wektora do ulubionych jesteśmy w stanie modyfikować jego zawartość za pomocą wcześniejszego sumowania:
+* Funkcja `fave()` jest podatnym komponentem zadania - nadpisuje o 4 bajty * indeks za dużo i dzięki kilkukrotnemu dodaniu wektora do ulubionych jesteśmy w stanie modyfikować jego zawartość za pomocą wcześniejszego sumowania:
 ```c
 void fave()
 {
@@ -155,5 +155,5 @@ but was it really your favorite?\n");
 	}
 }
 ```
-
+* Aby pokonać PIE wystarczy dodać pierwszy wektor i wypisać go na konsolę - jest tam podany adres funkcji printFunc a następnie policzyć offset pomiędzy `printVector` a `thisIsSecret`
 
