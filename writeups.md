@@ -210,7 +210,7 @@ void findSomeWords() {
     return;
 }
 ```
-* Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure`:
+* Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure` - dodatkowym "ficzerem", który przyda się w późniejszej exploitacji jest format string vulnerability w `printf()`:
 ```c
 void selectABook() {
     /* Our Apologies,the interface is currently under developement */
