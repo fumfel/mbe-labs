@@ -18,7 +18,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 Flaga:  `0verfl0wz_0n_th3_h3ap_4int_s0_bad`
 
-* Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak ASLR!**
+* Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak PIE!**
 * Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
 * Wiadomości przechowuje struktura zdefiniowana poniżej:
 ```c
@@ -181,7 +181,7 @@ Th@t_w@5_my_f@v0r1t3_ch@11
 
 Flaga: `flag` 
 
-* Program posiada wszystkie mechanizmy bezpieczeństwa z wyjątkiem PIE
+* Program posiada wszystkie mechanizmy bezpieczeństwa z **wyjątkiem PIE**
 * Jego funkcjonalnością jest wypisywanie tekstów z dzieł Arystotelesa:
 	* Input "A" wypisuje `Aristote's Metaphysics 350 B.C. Book VIII`
 	* Input "F" wypisuje `Aristote's Metaphysics 350 B.C. Book IVIZ`
@@ -207,6 +207,29 @@ void findSomeWords() {
     }
 
     // protected by my CUSTOM cookie - so soooo safe now
+    return;
+}
+```
+* Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure`:
+```c
+void selectABook() {
+    /* Our Apologies,the interface is currently under developement */
+    char buf_secure[512];
+    scanf("%s", buf_secure);
+    printf(buf_secure);
+    if(strcmp(buf_secure, "A") == 0){
+        readA();
+    }else if(strcmp(buf_secure,"F") == 0){
+        readB();
+    }else if(*buf_secure == '\x00'){
+        readC();
+    }else if(buf_secure == 1337){
+        printf("\nhackers dont have time to read.\n");
+        exit(EXIT_FAILURE);
+    }else{
+        printf("\nWhat were you thinking, that isn't a good book.");
+        selectABook();
+    }
     return;
 }
 ```
