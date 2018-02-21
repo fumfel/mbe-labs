@@ -210,7 +210,7 @@ void findSomeWords() {
     return;
 }
 ```
-* Customowy kanarek pobiera adres zwykłego kanarka i 8 bajtów przed nim. Dodatkowo wszystko jest poddawane operacji xor `((kanarek ^ kanarek - 8 b) xor 0xdeadbeef)`
+* Customowy kanarek pobiera adres zwykłego kanarka i 8 bajtów przed nim. Dodatkowo wszystko jest poddawane operacji xor `((kanarek ^ kanarek - 8 b) xor 0xdeadbeef)` -> w związku z tym wymagane jest ustawienie takiej wartości, aby spełniała warunek: `0xdeadbeef ^ kanarek`
 * Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure` - dodatkowym "ficzerem", który przyda się w późniejszej exploitacji (wyciek kanarka na stosie) jest format string vulnerability w `printf()`:
 ```c
 void selectABook() {
@@ -244,3 +244,5 @@ void selectABook() {
 	[+] Enter Your Favorite Author's Last Name: %130$x
 f5eb2f00
 ```
+* Leakujemy również zawartość adresu EBP (kanarek + 4 bajty), czyli `%131$x`
+* Docelowa zawartość stosu musi wyglądać w następujący sposób: `|ŚMIECI 16 bajtów| 0xDEADBEEF | ŚMIECI 4 bajty | KANAREK | EBP | ROP`
