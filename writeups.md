@@ -210,7 +210,7 @@ void findSomeWords() {
     return;
 }
 ```
-* Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure` - dodatkowym "ficzerem", który przyda się w późniejszej exploitacji jest format string vulnerability w `printf()`:
+* Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure` - dodatkowym "ficzerem", który przyda się w późniejszej exploitacji (wyciek kanarka na stosie) jest format string vulnerability w `printf()`:
 ```c
 void selectABook() {
     /* Our Apologies,the interface is currently under developement */
@@ -232,4 +232,14 @@ void selectABook() {
     }
     return;
 }
+```
+* Aby ominąć kanarka wymagane jest poznanie jego wartości - kanarek znajduje się na stosie pod adresem `0x5b0` a string weściowy pod `0x3b0`. Offset `(0x5b0 - 0x3b0)` pomiędzy nimi to `0x200 (512)` czyli modyfikatorem wypisującym string będzie `(512 b / 4 b ) + 2 = 130`, a dokładnie `%130$x`:
+```
+**********************************************
+{|}  Welcome to QUEND's Beta-Book-Browser  {|}
+**********************************************
+
+	==> reading is for everyone <==
+	[+] Enter Your Favorite Author's Last Name: %130$x
+f5eb2f00
 ```
