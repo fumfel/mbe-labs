@@ -175,4 +175,38 @@ lab8B@warzone:/levels/lab08$ python /tmp/lab_8b.py
 $ cat /home/lab8A/.pass
 Th@t_w@5_my_f@v0r1t3_ch@11
 ```
+----
 
+**Lab 8A**
+
+Flaga: `flag` 
+
+* Program posiada wszystkie mechanizmy bezpieczeństwa z wyjątkiem PIE
+* Jego funkcjonalnością jest wypisywanie tekstów z dzieł Arystotelesa:
+	* Input "A" wypisuje `Aristote's Metaphysics 350 B.C. Book VIII`
+	* Input "F" wypisuje `Aristote's Metaphysics 350 B.C. Book IVIZ`
+	* Input `\x00` wypisuje `Aristote's Metaphysics 350 B.C. Book MN9+`
+* Program implementuje własne ciastko / kanarka na stosie w funkcji `findSomeWords()`:
+```c
+void findSomeWords() {
+    /* We specialize in words of wisdom */
+    char buf[24];
+    // to avoid the null
+    global_addr = (&buf+0x1);
+    // have to make sure no one is stealing the librarians cookies (they get angry)
+    global_addr_check = global_addr-0x2;
+    char lolz[4];
+
+    printf("\n..I like to read ^_^ <==  ");
+    read(STDIN, buf, 2048); // >> read a lot every day !
+
+    if(((*( global_addr))^(*(global_addr_check))) != ((*( global_addr))^(0xdeadbeef))){
+        printf("\n\nWoah There\n");
+        // why are you trying to break my program q-q
+        exit(EXIT_FAILURE);
+    }
+
+    // protected by my CUSTOM cookie - so soooo safe now
+    return;
+}
+```
