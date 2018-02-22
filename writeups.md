@@ -247,3 +247,4 @@ void selectABook() {
 0xED74AA00:0xBFFFF5B8
 ```
 * Docelowa zawartość stosu musi wyglądać w następujący sposób: `|ŚMIECI 16 bajtów| 0xDEADBEEF | ŚMIECI 4 bajty | KANAREK | EBP | ROP`
+* Łańcuch ROP w zasadzie dowolny - tak jak w innych widzianych przeze mnie rozwiązaniach tego zadania skorzystałem z automatycznie wygenerowanego chaina poprzez `ropgadget /levels/lab08/lab8A --ropchain`. Jedyne co zawsze zmieniam to gadżety z `inc eax` na `add eax, 2` i `add eax, 3` - nie mogę patrzeć na jedenaście razy powtórzony ten sam gadżet ;-)
