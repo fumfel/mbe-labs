@@ -234,15 +234,16 @@ void selectABook() {
     return;
 }
 ```
-* Aby ominąć kanarka wymagane jest poznanie jego wartości - kanarek znajduje się na stosie pod adresem `0x5b0` a string weściowy pod `0x3b0`. Offset `(0x5b0 - 0x3b0)` pomiędzy nimi to `0x200 (512)` czyli modyfikatorem wypisującym string będzie `(512 b / 4 b ) + 2 = 130`, a dokładnie `%130$x`:
+* Aby ominąć kanarka wymagane jest poznanie jego wartości - kanarek znajduje się na stosie pod adresem `0x5b0` a string weściowy pod `0x3b0`. Offset `(0x5b0 - 0x3b0)` pomiędzy nimi to `0x200 (512)` czyli modyfikatorem wypisującym string będzie `(512 b / 4 b ) + 2 = 130`, a dokładnie `%130$x`
+* Leakujemy również zawartość adresu EBP (kanarek + 4 bajty), czyli `%131$x`
+* Powyższe dwa kroki można wykonać na raz, wraz eleganckim formatowaniem: `0x%130$08X:0x%131$X`:
 ```
 **********************************************
 {|}  Welcome to QUEND's Beta-Book-Browser  {|}
 **********************************************
 
 	==> reading is for everyone <==
-	[+] Enter Your Favorite Author's Last Name: %130$x
-f5eb2f00
+	[+] Enter Your Favorite Author's Last Name: 0x%130$08X:0x%131$X
+0xED74AA00:0xBFFFF5B8
 ```
-* Leakujemy również zawartość adresu EBP (kanarek + 4 bajty), czyli `%131$x`
 * Docelowa zawartość stosu musi wyglądać w następujący sposób: `|ŚMIECI 16 bajtów| 0xDEADBEEF | ŚMIECI 4 bajty | KANAREK | EBP | ROP`
