@@ -179,7 +179,7 @@ Th@t_w@5_my_f@v0r1t3_ch@11
 
 **Lab 8A**
 
-Flaga: `flag` 
+Flaga: `H4x0r5_d0nt_N33d_m3t4pHYS1c5` 
 
 * Program posiada wszystkie mechanizmy bezpieczeństwa z **wyjątkiem PIE**
 * Jego funkcjonalnością jest wypisywanie tekstów z dzieł Arystotelesa:
