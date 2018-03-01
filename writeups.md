@@ -332,3 +332,20 @@ Which lockbox?: 0
 Item value: 1337
 Segmentation fault (core dumped)
 ```
+* Również mamy kontrolę nad rozmiarem alokowanej pamięci w hashsecie:
+```
+lab9A@warzone:/levels/lab09$ ./lab9A 
++----------- clark's improved item storage -----------+
+| [ -- Now using HashSets for insta-access to items!  |
+| 1. Open a lockbox                                   |
+| 2. Add an item to a lockbox                         |
+| 3. Get an item from a lockbox                       |
+| 4. Destroy your lockbox and items in it             |
+| 5. Exit                                             |
++-----------------------------------------------------+
+Enter choice: 1
+Which lockbox do you want?: 0
+How many items will you store?: 4294967295
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+```
