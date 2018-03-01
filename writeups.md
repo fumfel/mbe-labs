@@ -316,7 +316,7 @@ Flaga:  ``
 
 * Jedynymi zabezpieczeniami w jakie wyposażona jest binarka to Partial RELRO oraz NX - **brak kanarka, PIE i FORTIFY!**
 * Binarka posiada 300 sekundowy timer, który killuje program po tym czasie
-* Luka znajduje się w funkcji odpowiedzialnej za fetchowanie elementu z hashsetu - program nie uwzględnia w warunkach elementów do pobrania indeksu zero:
+* Luka znajduje się w funkcji odpowiedzialnej za fetchowanie i dodawanie elementu z/do hashsetu - program nie uwzględnia w warunkach elementów do pobrania indeksu zero lub braku obiektu:
 ```
 lab9A@warzone:/levels/lab09$ ./lab9A 
 +----------- clark's improved item storage -----------+
