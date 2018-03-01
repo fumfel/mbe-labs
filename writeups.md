@@ -307,3 +307,28 @@ Choose an index: 0
 DSVector[0] = -1210785795
 ```
 * Ostatnim krokiem jest zbudowanie odpowiedniego układu pamieci na stosie (ret2libc): `| ŚMIECI 256 indeksów | KANAREK | ŚMIECI (EBP) |  RA (system()) | system() - ARGS `
+
+----
+
+**Lab 9A**
+
+Flaga:  ``
+
+* Jedynymi zabezpieczeniami w jakie wyposażona jest binarka to Partial RELRO oraz NX - **brak kanarka, PIE i FORTIFY!**
+* Binarka posiada 300 sekundowy timer, który killuje program po tym czasie
+* Luka znajduje się w funkcji odpowiedzialnej za fetchowanie elementu z hashsetu - program nie uwzględnia w warunkach elementów do pobrania indeksu zero:
+```
+lab9A@warzone:/levels/lab09$ ./lab9A 
++----------- clark's improved item storage -----------+
+| [ -- Now using HashSets for insta-access to items!  |
+| 1. Open a lockbox                                   |
+| 2. Add an item to a lockbox                         |
+| 3. Get an item from a lockbox                       |
+| 4. Destroy your lockbox and items in it             |
+| 5. Exit                                             |
++-----------------------------------------------------+
+Enter choice: 3
+Which lockbox?: 0
+Item value: 1337
+Segmentation fault (core dumped)
+```
