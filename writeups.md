@@ -253,6 +253,8 @@ void selectABook() {
 
 **Lab 9C**
 
+Flaga: `1_th0uGht_th4t_w4rn1ng_wa5_l4m3` 
+
 * Program posiada wszystkie mechanizmy bezpieczeństwa
 * Podstawową funkcją programu jest dodawanie liczb w klasie `DSVector`
 * Binarka posiada 60 sekundowy timer, który killuje program po tym czasie
@@ -304,4 +306,4 @@ Enter choice: 2
 Choose an index: 0
 DSVector[0] = -1210785795
 ```
-* Ostatnim krokiem jest zbudowanie odpowiedniego układu pamieci na stosie: `| ŚMIECI 256 indeksów | KANAREK | ŚMIECI (EBP) |  RA (system()) | system() - ARGS `
+* Ostatnim krokiem jest zbudowanie odpowiedniego układu pamieci na stosie (ret2libc): `| ŚMIECI 256 indeksów | KANAREK | ŚMIECI (EBP) |  RA (system()) | system() - ARGS `
