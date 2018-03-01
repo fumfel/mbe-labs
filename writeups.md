@@ -248,3 +248,30 @@ void selectABook() {
 ```
 * Docelowa zawartość stosu musi wyglądać w następujący sposób: `|ŚMIECI 16 bajtów| 0xDEADBEEF | ŚMIECI 4 bajty | KANAREK | EBP | ROP`
 * Łańcuch ROP w zasadzie dowolny - tak jak w innych widzianych przeze mnie rozwiązaniach tego zadania skorzystałem z automatycznie wygenerowanego chaina poprzez `ropgadget /levels/lab08/lab8A --ropchain`. Jedyne co zawsze zmieniam to gadżety z `inc eax` na `add eax, 2` i `add eax, 3` - nie mogę patrzeć na jedenaście razy powtórzony ten sam gadżet ;-)
+
+----
+
+**Lab 9C**
+
+* Program posiada wszystkie mechanizmy bezpieczeństwa
+* Podstawową funkcją programu jest dodawanie liczb w klasie `DSVector`
+* Binarka posiada 60 sekundowy timer, który killuje program po tym czasie
+* Dzięki kiepsko zaimplementowanej funkcjonalności czytania z wektora jest możliwy **arbitrary read** i leak kanarka na stosie i wartości potrzebnej do obliczenia offsetu dla `system()` oraz `/bin/sh` i dzięki temu pokonania ASLR:
+```c
+template <class T>
+class DSVector {
+    public:
+                     // I don't like indexing from 0, I learned VB.NET first.
+        DSVector() : len(1), alloc_len(len+256) {}
+        unsigned int size() { return len; }
+        void append(T item);
+                                            // No info leaks, either!
+        T get(unsigned int index) { return (index < alloc_len ? vector_data[index] : -1); };
+    private:
+        unsigned int alloc_len;
+        unsigned int len;
+        // I was asleep during the dynamic sizing part, at least you can't overflow!
+        T vector_data[1+256];
+};
+```
+
