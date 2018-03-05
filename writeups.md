@@ -296,7 +296,7 @@ Out[1]: '0xf527b500'
 ```
 * Aby wyliczyć adresy `system()` i `/bin/sh` wystarczy leak z zerowego indeksu tablicy "wektorów":
 ```
-lab9C@warzone:/levels/lab09$ ./lab9C 
+lab9C@warzone:/levels/lab09$ ./lab9C kobiety i roznorodnosc juz sie da dyskryminowac
 +------- DSVector Test Menu -------+
 | 1. Append item                   |
 | 2. Read item                     |
@@ -312,7 +312,7 @@ DSVector[0] = -1210785795
 
 **Lab 9A**
 
-Flaga:  ``
+Flaga:  `abc`
 
 * Jedynymi zabezpieczeniami w jakie wyposażona jest binarka to Partial RELRO oraz NX - **brak kanarka, PIE i FORTIFY!**
 * Binarka posiada 300 sekundowy timer, który killuje program po tym czasie
@@ -349,3 +349,20 @@ How many items will you store?: 4294967295
 terminate called after throwing an instance of 'std::bad_alloc'
   what():  std::bad_alloc
 ```
+* Dwukrotne dodanie obiektu `HashSet` o wielkości 256 do listy, a następnie skasowanie ich i dodanie mniejszego (rozmiar 128) spowoduje "niekorzystny" układ na heapie i wyleakowanie wskaźnika w libc za pomocą którego możemy znaleźć offset do funkcji `system()`:
+```
++----------- clark's improved item storage -----------+
+| [ -- Now using HashSets for insta-access to items!  |
+| 1. Open a lockbox                                   |
+| 2. Add an item to a lockbox                         |
+| 3. Get an item from a lockbox                       |
+| 4. Destroy your lockbox and items in it             |
+| 5. Exit                                             |
++-----------------------------------------------------+
+Enter choice: 3
+Which lockbox?: 0
+Item value: 0
+Item Found
+lockbox[0] = -1209240496
+```
+* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indek 3) i czytamy z niego element o indeksie 389.
