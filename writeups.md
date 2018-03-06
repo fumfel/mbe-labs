@@ -349,8 +349,9 @@ How many items will you store?: 4294967295
 terminate called after throwing an instance of 'std::bad_alloc'
   what():  std::bad_alloc
 ```
+* Binarka nie sprawdza, "czytając" obiekt czy on istnieje - klasyczny UAF
 * Alokacja obiektów `HashSet` o różnych wielkościach (256, 128 i na końcu 600) pozwala na nadpisanie wskaźnika w vtable - konkretnie chodzi o wskaźnik do metody `add()`
-* Jednak w takim podejściu wymagany jest leak dwóch adresów: libc oraz heap (heap jako wskaźnik do listy przechowywanych `HashSet` - w niedalekiej odległości leży vtable, które jest do zepsucia:
+* Jednak w takim podejściu wymagany jest leak dwóch adresów: libc oraz heap (heap jako wskaźnik do listy przechowywanych `HashSet` - w niedalekiej odległości leży vtable, które jest do zepsucia):
 ```c
 // Hashset
 template<class T, class HashFunc>
@@ -384,4 +385,5 @@ Item value: 0
 Item Found
 lockbox[0] = -1209240496
 ```
-* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indek 3) i czytamy z niego element o indeksie 389.
+* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indeks 3) i czytamy z niego element o indeksie 389.
+* Vtable znajduje się pod adresem: `heap - 0x808`
