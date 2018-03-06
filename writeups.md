@@ -349,6 +349,25 @@ How many items will you store?: 4294967295
 terminate called after throwing an instance of 'std::bad_alloc'
   what():  std::bad_alloc
 ```
+* Alokacja obiektów `HashSet` o różnych wielkościach (256, 128 i na końcu 600) pozwala na nadpisanie wskaźnika w vtable - konkretnie chodzi o wskaźnik do metody `add()`
+* Jednak w takim podejściu wymagany jest leak dwóch adresów: libc oraz heap (heap jako wskaźnik do listy przechowywanych `HashSet` - w niedalekiej odległości leży vtable, które jest do zepsucia:
+```c
+// Hashset
+template<class T, class HashFunc>
+class HashSet {
+    public:
+        HashSet(unsigned int size) : m_size(size), set_data(new T[size]) {}
+        virtual ~HashSet() { delete [] set_data; }
+        virtual void add(T val);
+        virtual unsigned int find(T val);
+        virtual T get(unsigned int);
+    private:
+        unsigned int m_size;
+        HashFunc m_hash;
+        T *set_data;
+};
+typedef HashSet<int, hash_num> hashset_int;
+```
 * Dwukrotne dodanie obiektu `HashSet` o wielkości 256 do listy, a następnie skasowanie ich i dodanie mniejszego (rozmiar 128) spowoduje "niekorzystny" układ na heapie i wyleakowanie wskaźnika w libc za pomocą którego możemy znaleźć offset do funkcji `system()`:
 ```
 +----------- clark's improved item storage -----------+
