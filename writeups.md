@@ -386,4 +386,6 @@ Item Found
 lockbox[0] = -1209240496
 ```
 * W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indeks 3) i czytamy z niego element o indeksie 389.
-* Vtable znajduje się pod adresem: `heap - 0x808`
+* Vtable znajduje się pod adresem: `leaked heap - 0x808`
+* Mając adres vtable można określić wielkość potrzebnego `HashSetu` do jego wpisania
+* Ostatnim krokiem jest wpisanie adresu `/bin/sh` w pierwszym `HashSet` 
