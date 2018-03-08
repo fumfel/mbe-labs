@@ -385,7 +385,7 @@ Item value: 0
 Item Found
 lockbox[0] = -1209240496
 ```
-* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indeks 3) i czytamy z niego element o indeksie 389.
+* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indeks 3) i czytamy z niego element o indeksie 1 - jest to adres nowoutworzonego obiektu.
 * Warto w tym miejscu powiedzieć jak ustalić adres vtable za pomocą, dostępnego na warzone, gdb:
    * Komenda `info variables HashSet*` pozwoli uzyskać adres początku vtable (string `vtable for HashSet<int, hash_num>`):
 ```
@@ -406,6 +406,6 @@ gdb-peda$ x/20a 0x8049aa0
 0x8049ad0 <_ZTS7HashSetIi8hash_numE+20>:	0x0	0x804b088 <_ZTVN10__cxxabiv117__class_type_infoE@@CXXABI_1.3+8>	0x8049abc <_ZTS7HashSetIi8hash_numE>	0x3b031b01
 0x8049ae0:	0xb8	0x16	0xfffff2e4	0xd4
 ```
-* Vtable znajduje się pod adresem: `leaked heap - 0x808`
-* Mając adres vtable można określić wielkość potrzebnego `HashSetu` do jego wpisania
+* Vtable znajduje się pod adresem: `leaked heap - 0x2588`
+* Mając adres vtable można określić wielkość potrzebnego `HashSetu` do wpisania w pamięci jego adresu.
 * Ostatnim krokiem jest wpisanie adresu `/bin/sh` w pierwszym `HashSet` 
