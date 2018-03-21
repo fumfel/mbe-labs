@@ -14,6 +14,29 @@ Flaga:  `1m_all_ab0ut_d4t_b33f`
 
 ----
 
+**Project 1**
+
+Flaga:  `m0_tw33ts_m0_ch4inz_n0_m0n3y`
+
+* Jedynie partial RELRO
+* Brak pliku źródłowego
+* Binarka zawiera dwie ukryte opcje w menu: `3 - logowanie administratora, 6 - tryb debug (wymagany admin)`
+* Tweety w funkcji `do_tweet()` alokowane są w liście za pomocą funkcji `calloc()`
+* Hasło "surowe" to 16 bajtów z `/dev/urandom`
+* Hasło wygenerowane za pomocą nazwy użytkownika, salta i hasła "surowego" to: `generated_pass[i] = (raw_pass[i] + salt[i]) ^ username[i]`
+* Do pomyślnej exploitacji wymagana jest eskalacja uprawnień i włączenie `debug_mode`: zmienia się wtedy zachowanie funkcji `print_tweet`, co umożliwia wykorzystanie podatności typu format string.
+* Shellcode zostanie osadzony w tweetach, jednak należy pamiętać o ograniczeniu inputu do 16 bajtów
+* Format string zostanie wykorzystany do nadpisania wpisu w GOT - dobrym kandydatem jest funkcja `exit@got.plt`
+* Układ tweetów:
+  * Śmieci
+  * Shellcode #1
+  * Shellcode #2 
+  * Nadpisanie trzeciego bajtu (`%219x%8$hhn`), bajtem `0xe0`  w `exit@got.plt`
+  * Nadpisanie drugiego najmniej (`%59x%8$hhn`) znaczącego bajtu, bajtem `0x40`  w `exit@got.plt`
+
+
+----
+
 **Lab 7A**
 
 Flaga:  `0verfl0wz_0n_th3_h3ap_4int_s0_bad`
