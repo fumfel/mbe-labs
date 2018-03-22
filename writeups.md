@@ -450,3 +450,5 @@ Flaga:  `abc`
 ```
 * Binarka posiada 300 sekundowy timeout
 * Pierwszym wczytywanym "kluczem" jest zawartość pliku `GENERAL_HOTZ.key` i wartość wprowadzonego klucza jest porównywana za pomocą `strncmp()`
+* Funkcjami odpowiedzialnymi za sprawdzenie kluczy są: `keyauth_one()`, `keyauth_two()`, `keyauth_three()`
+* `keyauth_one()`
