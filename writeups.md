@@ -432,3 +432,21 @@ gdb-peda$ x/20a 0x8049aa0
 * Vtable znajduje się pod adresem: `leaked heap - 0x2588`
 * Mając adres vtable można określić wielkość potrzebnego `HashSetu` do wpisania w pamięci jego adresu.
 * Ostatnim krokiem jest wpisanie adresu `/bin/sh` w pierwszym `HashSet` 
+
+----
+
+**Project 2**
+
+Flaga:  `abc`
+
+* Wszystkie mechanizmy bezpieczeństwa
+* Do działania binarki wymagane jest wczytanie kluczy z katalogu macierzystego:
+```
+-r--------  1 project2_priv project2    33 Jun 21  2015 GENERAL_CROWELL.key
+-r--------  1 project2_priv project2    33 Jun 21  2015 GENERAL_DOOM.key
+-r--------  1 project2_priv project2    33 Jun 21  2015 GENERAL_HOTZ.key
+-r--------  1 project2      project2   324 Jun 21  2015 README
+-r-xr-x---  1 project2_priv project2 56604 Jun 21  2015 rpisec_nuke*
+```
+* Binarka posiada 300 sekundowy timeout
+* Pierwszym wczytywanym "kluczem" jest zawartość pliku `GENERAL_HOTZ.key` i wartość wprowadzonego klucza jest porównywana za pomocą `strncmp()`
