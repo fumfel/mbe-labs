@@ -435,20 +435,74 @@ gdb-peda$ x/20a 0x8049aa0
 
 ----
 
-**Project 2**
+**Lab 10C**
 
 Flaga:  `abc`
 
-* Wszystkie mechanizmy bezpieczeństwa
-* Do działania binarki wymagane jest wczytanie kluczy z katalogu macierzystego:
+* Moduł kernela 
+* Wymiana informacji z modułem jest realizowana za pomocą urządzenia `/dev/pwn` - funkcja `pwn_write()`:
+```c
+static ssize_t pwn_write(struct file* file, const char * buf, size_t count, loff_t *ppos)
+{ // Here we check for the password
+
+    printk(KERN_INFO "%s\n",buf);
+    if( count == 0x31337) {
+        if (sekret->auth) {
+	     // Do the root thing here.
+	     printk(KERN_INFO "Nice privs bro.\n");
+        }
+	return 0x31337;
+    }
+    
+    if(buf[0] == '\x01') {
+        printk("Flag is @ /root/flag");
+    }
+
+    if ( ( *(unsigned int *)buf ^ 0xcafebabe) == 0) {
+        printk(KERN_INFO "Performing Key Authentication now...\n");
+	sekret->algo(buf);
+    }
+
+    return count;
+}
 ```
--r--------  1 project2_priv project2    33 Jun 21  2015 GENERAL_CROWELL.key
--r--------  1 project2_priv project2    33 Jun 21  2015 GENERAL_DOOM.key
--r--------  1 project2_priv project2    33 Jun 21  2015 GENERAL_HOTZ.key
--r--------  1 project2      project2   324 Jun 21  2015 README
--r-xr-x---  1 project2_priv project2 56604 Jun 21  2015 rpisec_nuke*
+* Za proces uwierzytelniania odpowiada funkcja `algo_xor()`, której działanie rozpoczyna się od operacji `xor` na każdym bajcie dostarczonego bufora poprzez `/dev/pwn`. Metoda sprawdza również status uwierzytelnienia - jeżeli zmienna `sum` jest równa zero, uzyskujemy wyższe uprawnienia (zrealizowane jest to w nieco pokrętny, na pierwszy rzut oka, sposób za pomocą sumowania inputu i "flagi" sprawdzającej uprawnienia w postaci zmiennej `sum`):
+
+```c
+void algo_xor(char * buf) {
+/*
+    Secure One-Time Pad Authentication Function.
+*/
+    int i;
+    int sum;
+
+    sum = 0;
+    printk(KERN_INFO "Inside algo_xor!\n");
+   
+    for(i=0; i <= 1024; i++) {
+        sekret->key[i] ^= buf[i];
+    }
+   
+   for(i=0; i <= 1024; i++) {
+        sum += sekret->key[i];
+    }
+    
+    if(sum == 0) {
+        sekret->auth = 1;
+    }
+    else {
+        printk(KERN_INFO "Authentication Failed!\n");
+    	memset(sekret, 0 , sizeof(struct key_material));
+    	get_random_bytes(&(sekret->key),1024);
+    }
+    return;
+}
 ```
-* Binarka posiada 300 sekundowy timeout
-* Pierwszym wczytywanym "kluczem" jest zawartość pliku `GENERAL_HOTZ.key` i wartość wprowadzonego klucza jest porównywana za pomocą `strncmp()`
-* Funkcjami odpowiedzialnymi za sprawdzenie kluczy są: `keyauth_one()`, `keyauth_two()`, `keyauth_three()`
-* `keyauth_one()`
+* W oczy również rzuca się podatność `off-by-one` w pętlach `for()`, dzięki której jesteśmy w stanie nadpisać wskaźnik funkcji w strukturze `key_material`:
+```c
+typedef struct key_material {
+    char key[1024];
+    void (*algo)(char *);
+    int auth;
+}da_keyz;
+```
